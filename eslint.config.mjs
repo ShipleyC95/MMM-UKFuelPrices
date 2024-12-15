@@ -19,8 +19,6 @@ const config = [
       ...eslintPluginStylistic.configs["recommended-flat"].plugins,
     },
     rules: {
-      ...eslintPluginJs.configs.recommended.rules,
-      ...eslintPluginStylistic.configs["recommended-flat"].rules,
       "@stylistic/brace-style": ["error", "1tbs", { allowSingleLine: true }],
       "@stylistic/comma-dangle": ["error", "only-multiline"],
       "@stylistic/max-statements-per-line": ["error", { max: 2 }],

@@ -1,8 +1,9 @@
 {
-  "name": "mmm-template",
+  "name": "mmm-ukfuelprices",
   "version": "1.0.0",
   "description": "[Module description]",
-  "main": "MMM-Template.js",
+  "main": "MMM-UKFuelPrices.js",
+  "type": "module",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -10,17 +11,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+[GitHub url].git"
+    "url": "git+https://github.com/ShipleyC95/MMM-UKFuelPrices.git"
   },
   "keywords": [
     "template"
   ],
-  "author": "[Author]",
+  "author": "Chris Shipley",
   "license": "MIT",
   "bugs": {
-    "url": "[GitHub url]/issues"
+    "url": "https://github.com/ShipleyC95/MMM-UKFuelPrices/issues"
   },
-  "homepage": "[GitHub url]#readme",
+  "homepage": "https://github.com/ShipleyC95/MMM-UKFuelPrices#readme",
   "devDependencies": {
     "@eslint/js": "^9.10.0",
     "@stylistic/eslint-plugin": "^2.7.2",
