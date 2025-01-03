@@ -7,6 +7,7 @@ const fuelTypeMapping = {
 
 Module.register("MMM-UKFuelPrices", {
   defaults: {
+    updateInterval: 60, // in minutes
     postcode: "SW1A1AA",
     fuelType: "unleaded", // options: ["unleaded", "premium unleaded", "disel", "super "]
   },
@@ -83,14 +84,14 @@ Module.register("MMM-UKFuelPrices", {
     const self = this;
     setInterval(function () {
       self.loadData();
-    }, this.config.updateInterval * 6000);
+    }, this.config.updateInterval * 1000 * 60);
   },
 
   loadData: function () {
     if (!this.targetLocation) {
       this.sendSocketNotification("POSTCODE_LON_LAT", this.config.postcode);
     }
-    this.sendSocketNotification("FUEL_PRICES_GET", { suppliers });
+    this.sendSocketNotification("FUEL_PRICES_GET", { suppliers: this.suppliers });
   },
 
   socketNotificationReceived: function (notification, payload) {
@@ -99,6 +100,7 @@ Module.register("MMM-UKFuelPrices", {
       this.updateDom();
     };
     if (notification === "TARGET_LON_LAT") {
+      console.log("Setting target location", payload);
       this.targetLocation = payload;
     }
   },
