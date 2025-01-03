@@ -16,9 +16,11 @@ module.exports = NodeHelper.create({
 
   getFuelData: function (payload) {
     payload.suppliers.forEach(supplier => {
+      Log.info("Getting fuel data: ", supplier);
       fetch(supplier)
         .then(response => response.json())
         .then(dataJson => {
+          Log.info("first station", dataJson.stations[0]);
           this.sendSocketNotification("FUEL_PRICES_DATA", dataJson.stations);
         })
         .catch(error => {
