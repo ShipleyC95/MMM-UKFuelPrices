@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "[Module description]",
   "main": "MMM-UKFuelPrices.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
