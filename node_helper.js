@@ -1,11 +1,12 @@
 const fetch = require("node-fetch");
 const NodeHelper = require("node_helper");
+const Log = require("logger");
 
 module.exports = NodeHelper.create({
   socketNotificationReceived: function (notification, payload) {
+    Log.info(`Received notification: ${notification}`);
     if (notification === "FUEL_PRICES_GET") {
-      //first data pull after new config
-      this.getPredictions(payload);
+      this.getFuelData(payload);
     };
 
     if (notification === "POSTCODE_LON_LAT") {
@@ -31,6 +32,7 @@ module.exports = NodeHelper.create({
       .then(response => response.json())
       .then(dataJson => {
         const location = { longitude: dataJson.result.longitude, latitude: dataJson.result.latitude };
+        Log.info(location)
         this.sendSocketNotification("TARGET_LON_LAT", location);
       })
       .catch(error => {

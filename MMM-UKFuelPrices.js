@@ -7,7 +7,7 @@ const fuelTypeMapping = {
 
 Module.register("MMM-UKFuelPrices", {
   defaults: {
-    postcode: "SW1A 1AA",
+    postcode: "SW1A1AA",
     fuelType: "unleaded", // options: ["unleaded", "premium unleaded", "disel", "super "]
   },
 
@@ -83,7 +83,7 @@ Module.register("MMM-UKFuelPrices", {
     const self = this;
     setInterval(function () {
       self.loadData();
-    }, this.config.updateInterval * 60000);
+    }, this.config.updateInterval * 6000);
   },
 
   loadData: function () {
