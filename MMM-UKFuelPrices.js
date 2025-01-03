@@ -150,11 +150,13 @@ Module.register("MMM-UKFuelPrices", {
    * Render the page we're on.
    */
   getDom: function () {
+    console.log("Data points", this.data.length);
     const closestLocations = this.findClosestLocations(
       this.data,
       this.targetLocation,
       5
     );
+    console.log("Closest locations", closestLocations);
     const mappedData = this.mapData(closestLocations);
     const sortedByPrice = mappedData.sort((a, b) => {
       const priceA =
@@ -163,7 +165,7 @@ Module.register("MMM-UKFuelPrices", {
         b.Prices.unleaded !== undefined ? b.Prices.unleaded : Infinity;
       return priceA - priceB;
     });
-    createRender(sortedByPrice);
+    this.createRender(sortedByPrice);
 
     return this.wrapper;
   },
