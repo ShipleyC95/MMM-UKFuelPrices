@@ -7,8 +7,7 @@ const fuelTypeMapping = {
 
 Module.register("MMM-UKFuelPrices", {
   defaults: {
-    longitude: 54.093409,
-    latitude: -2.89479,
+    postcode: "SW1A 1AA",
     fuelType: "unleaded", // options: ["unleaded", "premium unleaded", "disel", "super "]
   },
 
@@ -46,20 +45,20 @@ Module.register("MMM-UKFuelPrices", {
 
   suppliers: [
     "https://applegreenstores.com/fuel-prices/data.json",
-    "https://fuelprices.asconagroup.co.uk/newfuel.json",
-    "https://storelocator.asda.com/fuel_prices_data.json",
-    "https://www.bp.com/en_gb/united-kingdom/home/fuelprices/fuel_prices_data.json",
-    "https://fuelprices.esso.co.uk/latestdata.json",
-    "https://jetlocal.co.uk/fuel_prices_data.json",
-    "https://api2.krlmedia.com/integration/live_price/krl",
-    "https://www.morrisons.com/fuel-prices/fuel.json",
-    "https://moto-way.com/fuel-price/fuel_prices.json",
-    "https://fuel.motorfuelgroup.com/fuel_prices_data.json",
-    "https://www.rontec-servicestations.co.uk/fuel-prices/data/fuel_prices_data.json",
-    "https://api.sainsburys.co.uk/v1/exports/latest/fuel_prices_data.json",
-    "https://www.sgnretail.uk/files/data/SGN_daily_fuel_prices.json",
-    "https://www.shell.co.uk/fuel-prices-data.html",
-    "https://www.tesco.com/fuel_prices/fuel_prices_data.json",
+    // "https://fuelprices.asconagroup.co.uk/newfuel.json",
+    // "https://storelocator.asda.com/fuel_prices_data.json",
+    // "https://www.bp.com/en_gb/united-kingdom/home/fuelprices/fuel_prices_data.json",
+    // "https://fuelprices.esso.co.uk/latestdata.json",
+    // "https://jetlocal.co.uk/fuel_prices_data.json",
+    // "https://api2.krlmedia.com/integration/live_price/krl",
+    // "https://www.morrisons.com/fuel-prices/fuel.json",
+    // "https://moto-way.com/fuel-price/fuel_prices.json",
+    // "https://fuel.motorfuelgroup.com/fuel_prices_data.json",
+    // "https://www.rontec-servicestations.co.uk/fuel-prices/data/fuel_prices_data.json",
+    // "https://api.sainsburys.co.uk/v1/exports/latest/fuel_prices_data.json",
+    // "https://www.sgnretail.uk/files/data/SGN_daily_fuel_prices.json",
+    // "https://www.shell.co.uk/fuel-prices-data.html",
+    // "https://www.tesco.com/fuel_prices/fuel_prices_data.json",
   ],
 
   /**
@@ -69,30 +68,13 @@ Module.register("MMM-UKFuelPrices", {
     return ["uk-fuel-prices.css"];
   },
 
-  async getPricesFromSuppliers() {
-    // TODO: Add caching to check last_updated property
-    const allStations = [];
-    for (const supplier of this.suppliers) {
-      try {
-        const result = await fetch(supplier);
-        const dataJson = await result.json();
-
-        allStations?.push(...dataJson.stations);
-      } catch (error) {
-        console.error(`Couldn't fetch ${supplier}`, error);
-        continue;
-      }
-    }
-
-    return allStations;
-  },
-
   /**
    * Pseudo-constructor for our module. Initialize stuff here.
    */
   start() {
     this.wrapper = document.createElement("div");
     this.wrapper.className = "station-container";
+    this.data = [];
     this.loadData();
     this.scheduleUpdate();
   },
@@ -104,30 +86,24 @@ Module.register("MMM-UKFuelPrices", {
     }, this.config.updateInterval * 60000);
   },
 
-  loadData() {
-    this.getPricesFromSuppliers()
-      .then((data) => {
-        const closestLocations = findClosestLocations(
-          data,
-          { longitude: this.config.longitude, latitude: this.config.latitude },
-          5
-        );
-        const mappedData = mapData(closestLocations);
-        const sortedByPrice = mappedData.sort((a, b) => {
-          const priceA =
-            a.Prices.unleaded !== undefined ? a.Prices.unleaded : Infinity;
-          const priceB =
-            b.Prices.unleaded !== undefined ? b.Prices.unleaded : Infinity;
-          return priceA - priceB;
-        });
-        createRender(sortedByPrice);
-      })
-      .catch((error) => {
-        console.error("Errors happened", error);
-      });
+  loadData: function () {
+    if (!this.targetLocation) {
+      this.sendSocketNotification("POSTCODE_LON_LAT", this.config.postcode);
+    }
+    this.sendSocketNotification("FUEL_PRICES_GET", { suppliers });
   },
 
-  createRender(data) {
+  socketNotificationReceived: function (notification, payload) {
+    if (notification === "FUEL_PRICES_DATA") {
+      this.data.concat(payload)
+      this.updateDom();
+    };
+    if (notification === "TARGET_LON_LAT") {
+      this.targetLocation = payload;
+    }
+  },
+
+  createRender: function (data) {
     data.forEach((station, index) => {
       const s = document.createElement("div");
       s.className = "station";
@@ -149,7 +125,7 @@ Module.register("MMM-UKFuelPrices", {
     });
   },
 
-  mapData(closestLocations) {
+  mapData: function (closestLocations) {
     return closestLocations.map((station) => {
       const mappedPrices = Object.entries(station.prices).reduce(
         (acc, [key, value]) => {
@@ -171,7 +147,22 @@ Module.register("MMM-UKFuelPrices", {
   /**
    * Render the page we're on.
    */
-  getDom() {
+  getDom: function () {
+    const closestLocations = this.findClosestLocations(
+      this.data,
+      this.targetLocation,
+      5
+    );
+    const mappedData = this.mapData(closestLocations);
+    const sortedByPrice = mappedData.sort((a, b) => {
+      const priceA =
+        a.Prices.unleaded !== undefined ? a.Prices.unleaded : Infinity;
+      const priceB =
+        b.Prices.unleaded !== undefined ? b.Prices.unleaded : Infinity;
+      return priceA - priceB;
+    });
+    createRender(sortedByPrice);
+
     return this.wrapper;
   },
 });
