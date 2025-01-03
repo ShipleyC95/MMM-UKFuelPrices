@@ -73,11 +73,12 @@ Module.register("MMM-UKFuelPrices", {
    * Pseudo-constructor for our module. Initialize stuff here.
    */
   start() {
+    var self = this;
     this.wrapper = document.createElement("div");
     this.wrapper.innerHTML = "Loading fuel prices...";
     this.wrapper.className = "station-container";
     this.data = [];
-    this.loadData();
+    // this.loadData();
     this.scheduleUpdate();
   },
 
@@ -85,7 +86,8 @@ Module.register("MMM-UKFuelPrices", {
     const self = this;
     setInterval(function () {
       self.loadData();
-    }, this.config.updateInterval * 1000 * 60);
+      self.updateDom();
+    }, this.config.updateInterval * 1000 * 1);
   },
 
   loadData: function () {
