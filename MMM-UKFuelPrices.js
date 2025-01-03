@@ -74,6 +74,7 @@ Module.register("MMM-UKFuelPrices", {
    */
   start() {
     this.wrapper = document.createElement("div");
+    this.wrapper.innerHTML = "Loading fuel prices...";
     this.wrapper.className = "station-container";
     this.data = [];
     this.loadData();
@@ -96,11 +97,12 @@ Module.register("MMM-UKFuelPrices", {
 
   socketNotificationReceived: function (notification, payload) {
     if (notification === "FUEL_PRICES_DATA") {
+      console.log("Setting fuel data", notification, { stations: payload.slice(-5) });
       this.data.concat(payload)
       this.updateDom();
     };
     if (notification === "TARGET_LON_LAT") {
-      console.log("Setting target location", payload);
+      console.log("Setting target location", { payload });
       this.targetLocation = payload;
     }
   },
