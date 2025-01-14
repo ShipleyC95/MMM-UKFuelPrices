@@ -1,38 +1,47 @@
+.station-container {
+  color: white;
+  max-width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px;
+}
 
-  .station-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
-  }
-  
-  .station {
-    border: 1px solid #555;
-    border-radius: 8px;
-    padding: 15px;
-    background-color: #222;
-    transition: transform 0.3s, background-color 0.3s;
-  }
-  
-  .station .highlighted {
-    background-color: #444;
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  }
-  
-  .station .location {
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .station .prices {
-    font-size: 16px;
-    margin-top: 10px;
-  }
-  
-  .station .distance {
-    font-size: 14px;
-    margin-top: 5px;
-    color: #aaa;
-  }
-  
+.station {
+  color: white;
+}
+
+.highlighted {
+  background-color: #444;
+  padding-top: 0.75rem;
+  border-radius: 0.375rem;
+}
+
+.location {
+  text-transform: uppercase;
+  border-bottom: 1px solid #fff;
+  width: 100%;
+  font-weight: bold;
+}
+
+.prices {
+  font-size: 1rem; /* text-md */
+  display: flex; /* flex */
+  flex-direction: row; /* flex-row */
+  gap: 4px; /* gap-[4px] */
+}
+
+.fuel-name {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+.fuel-price {
+  font-weight: normal;
+  text-transform: lowercase;
+}
+
+.station .distance span {
+  text-transform: lowercase;
+  font-weight: normal;
+  font-size: 12px;
+}
